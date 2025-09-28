@@ -2,7 +2,10 @@
 
 ## プロジェクトの目的
 
-Browser Lifecycle Lab は、ブラウザのライフサイクルイベント（`beforeunload`、`pagehide`、`pageshow`、`visibilitychange` など）を体験的に学ぶための検証用アプリです。TanStack Router を用いた SPA で、フォーム操作や画面遷移を通じて各種イベントの発火タイミングを確認できます。
+- Browser Lifecycle Lab は、ブラウザのライフサイクルイベント（`beforeunload`、`pagehide`、`pageshow`、`visibilitychange` など）を体験的に学ぶための検証用アプリです。TanStack Router を用いた SPA で、フォーム操作や画面遷移を通じて各種イベントの発火タイミングを確認できます。
+- 特に重要な観点は以下
+  - webview Android, webview on iOSで適用できるか
+  - 様々なユーザーフローに対して、どのような挙動が観察されるか
 
 ## 技術スタック
 

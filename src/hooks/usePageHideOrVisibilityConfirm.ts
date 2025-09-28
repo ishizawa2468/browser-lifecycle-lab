@@ -23,25 +23,49 @@ export function usePageHideOrVisibilityConfirm(
   const { add } = useDebug();
   const dialogLockedRef = useRef(false);
 
-  useEffect(() => {
-    if (!enabled) return;
+  console.log(
+    `[usePageHideOrVisibilityConfirm] hook initialized with enabled=${enabled}, scope="${scope}"`
+  );
 
+  useEffect(() => {
+    if (!enabled) {
+      console.log(
+        `[usePageHideOrVisibilityConfirm] effect skipped because guard is disabled for scope="${scope}"`
+      );
+      return;
+    }
+
+    console.log(
+      `[usePageHideOrVisibilityConfirm] effect subscribed for scope="${scope}"`
+    );
     dialogLockedRef.current = false;
 
     const openDialog = (origin: "pagehide" | "visibilitychange") => {
+      console.log(
+        `[usePageHideOrVisibilityConfirm] openDialog invoked from ${origin} for scope="${scope}"`
+      );
       if (dialogLockedRef.current) return;
       dialogLockedRef.current = true;
       const result = window.confirm(message);
+      console.log(
+        `[usePageHideOrVisibilityConfirm] confirm result=${result} for scope="${scope}"`
+      );
       add({ scope, type: "note", detail: { origin, confirmed: result } });
     };
 
     const onPageHide = (event: PageTransitionEvent) => {
+      console.log(
+        `[usePageHideOrVisibilityConfirm] pagehide fired with persisted=${event.persisted} for scope="${scope}"`
+      );
       add({ scope, type: "pagehide", detail: { persisted: event.persisted } });
       openDialog("pagehide");
     };
 
     const onVisibilityChange = () => {
       const state = document.visibilityState;
+      console.log(
+        `[usePageHideOrVisibilityConfirm] visibilitychange detected state="${state}" for scope="${scope}"`
+      );
       add({ scope, type: "visibilitychange", detail: { state } });
       if (state === "hidden") {
         openDialog("visibilitychange");
@@ -49,6 +73,9 @@ export function usePageHideOrVisibilityConfirm(
     };
 
     const onPageShow = (event: PageTransitionEvent) => {
+      console.log(
+        `[usePageHideOrVisibilityConfirm] pageshow fired with persisted=${event.persisted} for scope="${scope}"`
+      );
       add({ scope, type: "pageshow", detail: { persisted: event.persisted } });
       dialogLockedRef.current = false;
     };
@@ -58,6 +85,9 @@ export function usePageHideOrVisibilityConfirm(
     window.addEventListener("pageshow", onPageShow);
 
     return () => {
+      console.log(
+        `[usePageHideOrVisibilityConfirm] cleanup removing listeners for scope="${scope}"`
+      );
       window.removeEventListener("pagehide", onPageHide);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pageshow", onPageShow);

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, useBlocker } from "@tanstack/react-router";
-import { useDebug } from "../shared/DebugProvider";
+import { createFileRoute } from "@tanstack/react-router";
+import { useVisibilityDebug } from "../hooks/useVisibilityDebug";
+import { usePageTransitionDebug } from "../hooks/usePageTransitionDebug";
+import { useUnsavedNavigationBlocker } from "../hooks/useUnsavedNavigationBlocker";
 
 export const Route = createFileRoute("/form")({ component: FormPage });
 
@@ -8,67 +10,31 @@ function FormPage() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const isDirty = title !== "" || body !== "";
-  const { add } = useDebug();
 
-  // SPA 内遷移ブロック（モーダル制御込み）
-  const blocker = useBlocker({
-    shouldBlockFn: () => isDirty,
-    withResolver: true,
-    enableBeforeUnload: isDirty,
-  });
-
-  // visibilitychange
-  useEffect(() => {
-    const onVis = () => {
-      add({
-        scope: "form",
-        type: "visibilitychange",
-        detail: { state: document.visibilityState },
-      });
-    };
-    document.addEventListener("visibilitychange", onVis);
-    return () => document.removeEventListener("visibilitychange", onVis);
-  }, [add]);
-
-  // pagehide/pageshow（BFCache対応）
-  useEffect(() => {
-    const onHide = (e: PageTransitionEvent) => {
-      add({
-        scope: "form",
-        type: "pagehide",
-        detail: { persisted: e.persisted },
-      });
-      sessionStorage.setItem("form:draft", JSON.stringify({ title, body }));
-    };
-    const onShow = (e: PageTransitionEvent) => {
-      add({
-        scope: "form",
-        type: "pageshow",
-        detail: { persisted: e.persisted },
-      });
+  // Hooks で計測/可視化
+  useVisibilityDebug("form");
+  usePageTransitionDebug("form", {
+    onHide: () =>
+      sessionStorage.setItem("form:draft", JSON.stringify({ title, body })),
+    onShow: () => {
       const raw = sessionStorage.getItem("form:draft");
       if (raw) {
         const d = JSON.parse(raw);
         setTitle(d.title ?? "");
         setBody(d.body ?? "");
       }
-    };
-    window.addEventListener("pagehide", onHide);
-    window.addEventListener("pageshow", onShow);
-    return () => {
-      window.removeEventListener("pagehide", onHide);
-      window.removeEventListener("pageshow", onShow);
-    };
-  }, [title, body, add]);
+    },
+  });
+
+  const blocker = useUnsavedNavigationBlocker(isDirty);
 
   return (
     <div>
-      <h2>Form</h2>
+      <h2>Form (Hooks)</h2>
       <p>
         入力すると「未保存」になります。SPA
-        内遷移でモーダル、タブ閉じ/更新/外部遷移でネイティブ確認。
+        内遷移はモーダル、リロード/タブ閉じは beforeunload（有効時）。
       </p>
-
       <div style={{ display: "grid", gap: 8, maxWidth: 520 }}>
         <input
           placeholder="Title"
@@ -107,7 +73,6 @@ function FormPage() {
         </div>
       </div>
 
-      {/* SPA 内遷移がブロックされたらモーダルを出す */}
       {blocker.status === "blocked" && (
         <div style={modalStyle}>
           <div style={dialogStyle}>

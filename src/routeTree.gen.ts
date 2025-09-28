@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PagehideRouteImport } from './routes/pagehide'
 import { Route as FormRouteImport } from './routes/form'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 
+const PagehideRoute = PagehideRouteImport.update({
+  id: '/pagehide',
+  path: '/pagehide',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FormRoute = FormRouteImport.update({
   id: '/form',
   path: '/form',
@@ -33,34 +39,45 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/form': typeof FormRoute
+  '/pagehide': typeof PagehideRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/form': typeof FormRoute
+  '/pagehide': typeof PagehideRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/form': typeof FormRoute
+  '/pagehide': typeof PagehideRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/form'
+  fullPaths: '/' | '/dashboard' | '/form' | '/pagehide'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/form'
-  id: '__root__' | '/' | '/dashboard' | '/form'
+  to: '/' | '/dashboard' | '/form' | '/pagehide'
+  id: '__root__' | '/' | '/dashboard' | '/form' | '/pagehide'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   FormRoute: typeof FormRoute
+  PagehideRoute: typeof PagehideRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/pagehide': {
+      id: '/pagehide'
+      path: '/pagehide'
+      fullPath: '/pagehide'
+      preLoaderRoute: typeof PagehideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/form': {
       id: '/form'
       path: '/form'
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   FormRoute: FormRoute,
+  PagehideRoute: PagehideRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

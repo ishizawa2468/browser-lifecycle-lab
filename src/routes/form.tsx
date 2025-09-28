@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useVisibilityDebug } from "../hooks/useVisibilityDebug";
 import { usePageTransitionDebug } from "../hooks/usePageTransitionDebug";

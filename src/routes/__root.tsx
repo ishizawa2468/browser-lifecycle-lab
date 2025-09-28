@@ -12,6 +12,7 @@ export const Route = createRootRoute({
           <Link to="/">/</Link>
           <Link to="/form">/form</Link>
           <Link to="/dashboard">/dashboard</Link>
+          <Link to="/pagehide">/pagehide</Link>
         </nav>
         <hr />
         <Outlet />

@@ -1,36 +1,23 @@
-import { createFileRoute } from '@tanstack/react-router'
-import logo from '../logo.svg'
-import '../App.css'
+import { createFileRoute } from "@tanstack/react-router";
+import "../App.css";
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   component: App,
-})
+});
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/routes/index.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <a
-          className="App-link"
-          href="https://tanstack.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn TanStack
-        </a>
-      </header>
+      <div>
+        <h2>Home</h2>
+        <ol>
+          <li>「/form」で入力し、未保存状態を作る</li>
+          <li>SPA 内遷移（ナビから他ページ）でモーダルを確認</li>
+          <li>リロード/タブ閉じ/外部遷移で beforeunload を確認</li>
+          <li>別タブ切替/復帰で visibilitychange を確認</li>
+          <li>外部ページ→戻る で pageshow（BFCache）を確認</li>
+        </ol>
+      </div>
     </div>
-  )
+  );
 }
